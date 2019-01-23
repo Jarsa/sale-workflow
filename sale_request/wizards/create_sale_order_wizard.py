@@ -42,6 +42,15 @@ class CreateSaleOrderWizard(models.TransientModel):
         digits=dp.get_precision('Product Unit of Measure'),
         readonly=True,
     )
+    has_lines = fields.Boolean(
+        compute='_compute_has_lines',
+    )
+
+    @api.multi
+    @api.depends('request_line_id')
+    def _compute_has_lines(self):
+        for rec in self:
+            rec.has_lines = bool(rec.line_ids)
 
     @api.onchange('line_ids')
     def _onchange_qty_to_sale(self):

@@ -16,6 +16,16 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: sale_request
+#: model_terms:ir.ui.view,arch_db:sale_request.view_create_sale_order_wizard_form
+msgid ", There are not any sale order line compatible with this request. Check your data."
+msgstr ", No existe ninguna línea de pedido de venta compatible con esta requisición. Verifique su información."
+
+#. module: sale_request
+#: model_terms:ir.ui.view,arch_db:sale_request.view_create_sale_order_wizard_form
+msgid "Sorry!"
+msgstr "Lo siento"
+
+#. module: sale_request
 #: model_terms:ir.ui.view,arch_db:sale_request.view_sale_request_line_form
 msgid "<span>Product - </span>"
 msgstr "<span>Producto - </span>"
