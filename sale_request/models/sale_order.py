@@ -138,7 +138,7 @@ class SaleOrderLine(models.Model):
 
     @api.onchange('product_uom_qty', 'product_uom', 'route_id')
     def _onchange_product_id_check_availability(self):
-        if not self.order_id.master_sale_order:
+        if not self.order_id.master_sasle_order:
             super()._onchange_product_id_check_availability()
 
     @api.multi
