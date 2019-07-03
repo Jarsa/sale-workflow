@@ -160,27 +160,29 @@ class CreateSaleOrderWizard(models.TransientModel):
         if not pricelist_id:
             pricelist_obj = self.env['product.pricelist']
             pricelist_id = pricelist_obj._get_partner_pricelist(
-               partner, self.env.user.company_id.id)
+               partner, self.env.user.company_id.id
+            )
         return pricelist_id
 
     @api.model
     def _get_sale_order(self, request_line, sale_line=False):
         pricelist_id = self._get_pricelist_id(request_line, sale_line)
         so_obj = self.env['sale.order']
-        domain = [
-            ('request_id', '=', request_line.request_id.id),
-            ('pricelist_id', '=', pricelist_id)]
+        order = False
         if sale_line:
-            domain.append(
-                ('client_order_ref', '=', sale_line.order_id.client_order_ref))
-        order = so_obj.search(domain)
+            domain = [
+                ('request_id', '=', request_line.request_id.id),
+                ('pricelist_id', '=', pricelist_id),
+                ('client_order_ref', '=', sale_line.order_id.client_order_ref)
+            ]
+            order = so_obj.search(domain)
         if not order:
             order = so_obj.create(self._prepare_sale_order(
                 request_line.request_id, sale_line, pricelist_id))
         return order
 
     @api.multi
-    def _prepare_sale_order_line(self,  order, params):
+    def _prepare_sale_order_line(self, order, params):
         request_line = self.request_line_id
         product = request_line.product_id
         taxes = product.taxes_id
