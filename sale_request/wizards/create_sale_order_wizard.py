@@ -247,6 +247,10 @@ class CreateSaleOrderWizard(models.TransientModel):
                 ('request_line_id', '=', self.request_line_id.id)])
             required_qty = self.request_line_id.product_qty
             remaining_qty = self.request_line_id.remaining_product_qty
+            if not remaining_qty:
+                raise UserError(
+                    _('This line has already created. Please close this wizard'
+                      ' to see if the sale order is already created.'))
             if sale_line:
                 if not required_qty > remaining_qty:
                     raise UserError(
