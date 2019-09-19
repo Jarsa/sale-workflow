@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* sale_request
+#   * sale_request
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-13 22:42+0000\n"
-"PO-Revision-Date: 2019-09-13 22:42+0000\n"
+"POT-Creation-Date: 2019-09-19 21:40+0000\n"
+"PO-Revision-Date: 2019-09-19 21:40+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -222,14 +222,14 @@ msgstr "Editar precio de la línea de Pedido de Venta"
 
 #. module: sale_request
 #: code:addons/sale_request/wizards/create_sale_order_wizard.py:86
-#: code:addons/sale_request/wizards/create_sale_order_wizard.py:365
+#: code:addons/sale_request/wizards/create_sale_order_wizard.py:369
 #, python-format
 msgid "Error!"
 msgstr ""
 
 #. module: sale_request
 #: code:addons/sale_request/wizards/create_sale_order_wizard.py:235
-#: code:addons/sale_request/wizards/create_sale_order_wizard.py:253
+#: code:addons/sale_request/wizards/create_sale_order_wizard.py:257
 #, python-format
 msgid "Error! The quantity to sale is greather than the requested quantity."
 msgstr "¡Error! La cantidad a vender es mayor que la cantidad requerida."
@@ -677,7 +677,7 @@ msgid "Route"
 msgstr "Ruta"
 
 #. module: sale_request
-#: code:addons/sale_request/wizards/create_sale_order_wizard.py:294
+#: code:addons/sale_request/wizards/create_sale_order_wizard.py:298
 #: code:addons/sale_request/wizards/link_sale_order_wizard.py:102
 #: model:ir.model,name:sale_request.model_sale_order
 #: model:ir.model.fields,field_description:sale_request.field_create_sale_order_wizard_line__order_id
@@ -821,6 +821,12 @@ msgid "The users with this group are allowed to edit the price in sale order lin
 msgstr "Los usuarios con este grupo tienen permitido editar el precio de una línea de pedido de venta."
 
 #. module: sale_request
+#: code:addons/sale_request/wizards/create_sale_order_wizard.py:252
+#, python-format
+msgid "This line has already created. Please close this wizard to see if the sale order is already created."
+msgstr "Esta línea ya fue creada. Por favor cierra este asistente y valida si el pedido fue creado correctamente."
+
+#. module: sale_request
 #: selection:sale.request,activity_state:0
 msgid "Today"
 msgstr "Hoy"
@@ -920,7 +926,7 @@ msgstr "No puede solicitar más cantidad que la demanda inicial de esta requisic
 
 #. module: sale_request
 #: code:addons/sale_request/wizards/create_sale_order_wizard.py:226
-#: code:addons/sale_request/wizards/create_sale_order_wizard.py:366
+#: code:addons/sale_request/wizards/create_sale_order_wizard.py:370
 #, python-format
 msgid "You cannot request more than the remaining qty of this master sale order."
 msgstr "No puedes requerir más que la cantidad restante de este pedido master."
