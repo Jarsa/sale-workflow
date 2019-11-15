@@ -31,6 +31,11 @@
                         string="Sale orders" type="object"
                         icon="fa-bars" attrs="{'invisible':[('master_sale_order', '=', False)]}"/>
             </xpath>
+            <xpath expr="//field[@name='order_line']/form/field[@name='name']" position="after">
+                <group string="Related Orders">
+                    <field name="child_ids" nolabel="1"/>
+                </group>
+            </xpath>
         </field>
     </record>
     <record model="ir.ui.view" id="view_sale_order_inv_sale_request_form">
