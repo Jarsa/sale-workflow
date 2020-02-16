@@ -286,6 +286,8 @@ class SaleRequestLine(models.Model):
                 total_qty += line.product_uom._compute_quantity(
                     line.product_uom_qty, rec.product_uom_id)
             rec.remaining_product_qty = rec.product_qty - total_qty
+            if rec.remaining_product_qty > 0 and rec.state == 'done':
+                rec.state = 'pending'
 
     @api.multi
     def name_get(self):
