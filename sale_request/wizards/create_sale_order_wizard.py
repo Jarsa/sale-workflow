@@ -172,7 +172,8 @@ class CreateSaleOrderWizard(models.TransientModel):
         so_obj = self.env['sale.order']
         domain = [
             ('request_id', '=', request_line.request_id.id),
-            ('pricelist_id', '=', pricelist_id)]
+            ('pricelist_id', '=', pricelist_id),
+            ('state', '!=', 'cancel')]
         if sale_line:
             domain.append(
                 ('client_order_ref', '=', sale_line.order_id.client_order_ref))
@@ -244,7 +245,8 @@ class CreateSaleOrderWizard(models.TransientModel):
                   'order, please define it.'))
         if not self.line_ids or self.confirm_without_master:
             sale_line = self.env['sale.order.line'].search([
-                ('request_line_id', '=', self.request_line_id.id)])
+                ('request_line_id', '=', self.request_line_id.id),
+                ('state', '!=', 'cancel')])
             required_qty = self.request_line_id.product_qty
             remaining_qty = self.request_line_id.remaining_product_qty
             if not remaining_qty:
