@@ -36,6 +36,10 @@ class SaleOrder(models.Model):
     @api.multi
     def action_cancel(self):
         for rec in self:
+            if rec.request_id.state == 'done':
+                rec.request_id.write({'state': 'confirm'})
+                request_lines = rec.order_line.mapped('request_line_id')
+                request_lines.write({'state': 'pending'})
             if rec.master_sale_order and any(
                     [line.child_ids for line in self.order_line]):
                 raise UserError(
