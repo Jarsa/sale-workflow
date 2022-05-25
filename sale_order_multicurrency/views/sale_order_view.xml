@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.view.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='price_unit']" position="after">
+                <field
+                    name="line_currency_id"
+                    required="1"
+                    attrs="{'readonly': [('parent.state', 'not in', ['draft', 'sent', 'sale'])]}"
+                />
+            </xpath>
+            <xpath expr="//kanban/field[@name='price_unit']" position="after">
+                <field name="line_currency_id" />
+            </xpath>
+            <xpath expr="//kanban//div[hasclass('row')][2]" position="after">
+                <div class="row">
+                    <div class="col-12 text-muted">
+                        Line Currency:
+                        <t t-esc="record.line_currency_id.value" />
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//form//field[@name='price_unit']" position="after">
+                <field
+                    name="line_currency_id"
+                    required="1"
+                    attrs="{'readonly': [('parent.state', 'not in', ['draft', 'sent', 'sale'])]}"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>
