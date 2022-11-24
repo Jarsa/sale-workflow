@@ -17,18 +17,18 @@ class TestSaleOrderLotSelection(TransactionCase):
         I confirm it, transfer the delivery order and check lots on picking
 
         """
-        super().setUpClass()
-        cls.prd_cable = cls.env.ref("stock.product_cable_management_box")
-        cls.prd_cable.tracking = "lot"
-        cls.product_46 = cls.env.ref("product.product_product_13")
-        cls.product_12 = cls.env.ref("product.product_product_12")
-        cls.supplier_location = cls.env.ref("stock.stock_location_suppliers")
-        cls.customer_location = cls.env.ref("stock.stock_location_customers")
-        cls.stock_location = cls.env.ref("stock.stock_location_stock")
-        cls.product_model = cls.env["product.product"]
-        cls.lot_model = cls.env["stock.lot"]
-        cls.lot_cable = cls.env.ref("sale_order_lot_selection.lot_cable_demo")
-        cls.sale = cls.env.ref("sale_order_lot_selection.sale_order_demo")
+        super(TestSaleOrderLotSelection, self).setUp()
+        self.prd_cable = self.env.ref("stock.product_cable_management_box")
+        self.prd_cable.tracking = "lot"
+        self.product_46 = self.env.ref("product.product_product_13")
+        self.product_12 = self.env.ref("product.product_product_12")
+        self.supplier_location = self.env.ref("stock.stock_location_suppliers")
+        self.customer_location = self.env.ref("stock.stock_location_customers")
+        self.stock_location = self.env.ref("stock.stock_location_stock")
+        self.product_model = self.env["product.product"]
+        self.lot_model = self.env["stock.lot"]
+        self.lot_cable = self.env.ref("sale_order_lot_selection.lot_cable")
+        self.sale = self.env.ref("sale_order_lot_selection.sale1")
 
     def _retrieve_stock_quantity(self, product, lot, location):
         return product.with_context(lot_id=lot.id, location=location.id).qty_available
@@ -36,7 +36,7 @@ class TestSaleOrderLotSelection(TransactionCase):
     def test_00_stock_available_wrong_lot(self):
         # We should not be able to reserve if some stock is available but with another
         # lot
-        self._update_stock_quantity(self.prd_cable, self.lot_cable, 1)
+        self._inventory_products(self.prd_cable, self.lot_cable, 1)
         other_lot = self.env["stock.lot"].create(
             {
                 "name": "test2",
@@ -158,8 +158,8 @@ class TestSaleOrderLotSelection(TransactionCase):
         lot10 = False
         lot11 = False
         lot12 = False
-        for move in picking_in.move_ids_without_package:
-            if move.product_id == self.prd_cable:
+        for ops in picking_in.move_ids_without_package:
+            if ops.product_id == self.prd_cable:
                 lot10 = self.lot_model.create(
                     {
                         "name": "0000010",
@@ -171,7 +171,7 @@ class TestSaleOrderLotSelection(TransactionCase):
                 move.move_line_ids.write(
                     {"lot_id": lot10.id, "quantity": move.product_qty}
                 )
-            if move.product_id == self.product_46:
+            if ops.product_id == self.product_46:
                 lot11 = self.lot_model.create(
                     {
                         "name": "0000011",
@@ -183,7 +183,7 @@ class TestSaleOrderLotSelection(TransactionCase):
                 move.move_line_ids.write(
                     {"lot_id": lot11.id, "quantity": move.product_qty}
                 )
-            if move.product_id == self.product_12:
+            if ops.product_id == self.product_12:
                 lot12 = self.lot_model.create(
                     {
                         "name": "0000012",
