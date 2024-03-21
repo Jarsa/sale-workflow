@@ -17,7 +17,7 @@ class TestSaleOrderLotSelection(TransactionCase):
         I confirm it, transfer the delivery order and check lots on picking
 
         """
-        super(TestSaleOrderLotSelection, self).setUp()
+        super().setUp()
         self.prd_cable = self.env.ref("stock.product_cable_management_box")
         self.prd_cable.tracking = "lot"
         self.product_46 = self.env.ref("product.product_product_13")
