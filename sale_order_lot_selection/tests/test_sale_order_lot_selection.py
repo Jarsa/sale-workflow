@@ -356,3 +356,56 @@ class TestSaleOrderLotSelection(TransactionCase):
         self.assertEqual(self.order4.state, "sale")
         # products are reserved
         self.assertEqual(self.order4.picking_ids[0].state, "assigned")
+
+    def test_05_available_lots_reserved_qty(self):
+        """Test that reserved quantities are not included in available lots"""
+        lot_demo = self.env["stock.lot"].create(
+            {
+                "name": "lot_reserved_test",
+                "product_id": self.product_12.id,
+                "company_id": self.env.company.id,
+            }
+        )
+        self._update_stock_quantity(self.product_12, lot_demo, 10.0)
+
+        # Create another SO and confirm it to reserve 4.0 units
+        so_reserve = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+            }
+        )
+        self.env["sale.order.line"].create(
+            {
+                "order_id": so_reserve.id,
+                "product_id": self.product_12.id,
+                "product_uom_qty": 4.0,
+                "lot_id": lot_demo.id,
+            }
+        )
+        so_reserve.action_confirm()
+        so_reserve.picking_ids.action_assign()
+        # Ensure picking is assigned so it actually reserves the quantity
+        self.assertEqual(so_reserve.picking_ids[0].state, "assigned")
+
+        # Now test the available quantities on a new draft SO
+        so_new = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+            }
+        )
+        line_new = self.env["sale.order.line"].create(
+            {
+                "order_id": so_new.id,
+                "product_id": self.product_12.id,
+                "product_uom_qty": 1.0,
+            }
+        )
+
+        # Check available lots logic
+        lot_info = line_new.get_available_lots_for_line()
+        # The lot `lot_demo` should show 6.0 qty
+        lot_res = next(
+            (lot for lot in lot_info["available"] if lot["id"] == lot_demo.id), None
+        )
+        self.assertTrue(lot_res)
+        self.assertEqual(lot_res["qty"], 6.0)
