@@ -9,6 +9,7 @@
     "data": [
         "views/sale_order_views.xml",
         "views/report_sale_order.xml",
+        "views/sale_portal_templates.xml",
     ],
     "maintainers": ["bodedra"],
     "installable": True,
