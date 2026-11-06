@@ -1,7 +1,7 @@
 # Copyright 2026 Jarsa
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 from odoo.tests import Form
 
 from odoo.addons.base.tests.common import BaseCommon
@@ -24,6 +24,15 @@ class TestSaleOrder(BaseCommon):
         cls.person_alone = Partner.create({"name": "Jane"})
         cls.other = Partner.create({"name": "Other"})
         cls.env.user.group_ids += cls.env.ref("account.group_delivery_invoice_address")
+        cls.salesperson = cls.env["res.users"].create(
+            {
+                "name": "Salesperson",
+                "login": "salesperson_own_addresses",
+                "group_ids": [
+                    (6, 0, [cls.env.ref("sales_team.group_sale_salesman").id])
+                ],
+            }
+        )
 
     def _order(self, partner):
         with Form(self.env["sale.order"]) as order_form:
@@ -68,3 +77,29 @@ class TestSaleOrder(BaseCommon):
             order.partner_shipping_id = self.person
         with self.assertRaises(ValidationError):
             order.partner_invoice_id = self.delivery_1
+
+    def test_customer_not_readable_by_salesperson(self):
+        """The domains are computed even when a record rule hides the customer
+        to the salesperson of the order."""
+        self.env["ir.rule"].create(
+            {
+                "name": "Salesperson: own contacts",
+                "model_id": self.env.ref("base.model_res_partner").id,
+                "groups": [(4, self.env.ref("sales_team.group_sale_salesman").id)],
+                "domain_force": "[('user_id', '=', user.id)]",
+            }
+        )
+        order = self._order(self.company)
+        order.user_id = self.salesperson
+        order = order.with_user(self.salesperson)
+        with self.assertRaises(AccessError):
+            order.partner_id.check_access("read")
+        values = order.read(["partner_invoice_domain", "partner_shipping_domain"])[0]
+        self.assertEqual(
+            sorted(values["partner_invoice_domain"][0][2]),
+            sorted((self.company | self.invoice).ids),
+        )
+        self.assertEqual(
+            sorted(values["partner_shipping_domain"][0][2]),
+            sorted((self.delivery_1 | self.delivery_2).ids),
+        )
