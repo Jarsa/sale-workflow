@@ -11,18 +11,25 @@ class SaleOrder(models.Model):
     partner_invoice_domain = fields.Binary(compute="_compute_partner_address_domains")
     partner_shipping_domain = fields.Binary(compute="_compute_partner_address_domains")
 
+    def _get_partner_addresses(self, address_type):
+        """Addresses of the customer of the given type.
+
+        Read with sudo: the salesperson of the order is not always allowed to
+        read the customer (record rules), and the domains must still be
+        computed to display the order.
+        """
+        self.ensure_one()
+        partner = self.partner_id.sudo()
+        return partner.child_ids.filtered(lambda p: p.type == address_type).sudo(False)
+
     def _get_partner_invoice_addresses(self):
         """The customer itself and its invoice addresses."""
-        self.ensure_one()
-        partner = self.partner_id
-        return partner | partner.child_ids.filtered(lambda p: p.type == "invoice")
+        return self.partner_id | self._get_partner_addresses("invoice")
 
     def _get_partner_shipping_addresses(self):
         """The delivery addresses of the customer, or the customer itself
         when it has none."""
-        self.ensure_one()
-        partner = self.partner_id
-        return partner.child_ids.filtered(lambda p: p.type == "delivery") or partner
+        return self._get_partner_addresses("delivery") or self.partner_id
 
     @api.depends("partner_id", "partner_id.child_ids.type")
     def _compute_partner_address_domains(self):
